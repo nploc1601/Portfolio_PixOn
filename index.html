@@ -872,7 +872,6 @@
                     transparent 320deg, rgba(255, 255, 255, 0.08) 320deg, transparent 328deg,
                     transparent 340deg, rgba(255, 255, 255, 0.08) 340deg, transparent 348deg,
                     transparent 360deg);
-            animation: PixOn-spin-slow 60s linear infinite;
             z-index: -2;
             will-change: transform;
             transform: translate3d(0, 0, 0);
@@ -1064,7 +1063,7 @@
 
         @keyframes PixOn-float-el {
             0% {
-                transform: translateY(0) rotate(var(--rot, 0deg));
+                transform: translate3d(0, 0, 0) rotate(var(--rot, 0deg));
                 opacity: 0.6
             }
 
@@ -1073,7 +1072,7 @@
             }
 
             100% {
-                transform: translateY(-120vh) rotate(calc(var(--rot, 0deg) + 180deg));
+                transform: translate3d(0, -120vh, 0) rotate(calc(var(--rot, 0deg) + 180deg));
                 opacity: 0
             }
         }
@@ -1100,20 +1099,19 @@
         <div class="PixOn-streak PixOn-streak-1"></div>
         <div class="PixOn-streak PixOn-streak-2"></div>
         <div class="PixOn-halftone"></div>
-        <!-- Background image covering the full screen -->
         <div
             class="absolute inset-0 pointer-events-none select-none overflow-hidden z-[-1]">
             <img src="pixon background.png" alt="PixOn Background"
-                class="w-full h-full object-cover opacity-[0.08] filter blur-[1.5px] select-none pointer-events-none">
+                class="w-full h-full object-cover opacity-[0.08] select-none pointer-events-none">
         </div>
         <div class="PixOn-sparkles" id="PixOn-sparkles"></div>
         <div class="PixOn-game-elements" id="PixOn-game-el"></div>
         <div class="PixOn-warm-vignette"></div>
         <div
-            class="absolute top-[20%] right-[-10%] w-[400px] h-[400px] rounded-full bg-ai-cyan mix-blend-screen filter blur-[100px] opacity-15 animate-blob animation-delay-2000">
+            class="absolute top-[20%] right-[-10%] w-[400px] h-[400px] rounded-full bg-[#D4680A]/10 filter blur-[80px] animate-blob animation-delay-2000">
         </div>
         <div
-            class="absolute bottom-[-20%] left-[20%] w-[600px] h-[600px] rounded-full bg-ai-purple mix-blend-screen filter blur-[120px] opacity-15 animate-blob animation-delay-4000">
+            class="absolute bottom-[-20%] left-[20%] w-[600px] h-[600px] rounded-full bg-[#F5A623]/10 filter blur-[90px] animate-blob animation-delay-4000">
         </div>
     </div>
 
@@ -4558,14 +4556,17 @@
             function updateCounter(currentTime) {
                 if (!startTime) startTime = currentTime;
                 const elapsed = currentTime - startTime - delay;
-                if (elapsed > 0) {
-                    const progress = Math.min(elapsed / duration, 1);
-                    const easeOut = 1 - Math.pow(1 - progress, 3);
-                    start = Math.floor(easeOut * 100);
-                    if (counter) counter.innerText = start + '%';
-                    if (progress < 1) { requestAnimationFrame(updateCounter); return; }
+                if (elapsed <= 0) {
+                    requestAnimationFrame(updateCounter);
+                    return;
                 }
-                requestAnimationFrame(updateCounter);
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                start = Math.floor(easeOut * 100);
+                if (counter) counter.innerText = start + '%';
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
             }
             requestAnimationFrame(updateCounter);
         });
